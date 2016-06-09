@@ -121,7 +121,7 @@ public:
    * @par Remarks
    * Returns @c error().
    */
-  URDL_DECL const boost::system::error_code& puberror() const;
+  URDL_DECL const std::error_code& puberror() const;
 
   /// Gets the open timeout of the stream buffer.
   /**
@@ -196,7 +196,7 @@ protected:
    * @c error_code values and categories depends on the protocol of the URL
    * used to open the stream buffer.
    */
-  URDL_DECL virtual const boost::system::error_code& error() const;
+  URDL_DECL virtual const std::error_code& error() const;
 
 private:
   URDL_DECL void init_buffers();

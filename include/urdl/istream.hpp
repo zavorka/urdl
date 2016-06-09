@@ -271,7 +271,7 @@ public:
    * }
    * @endcode
    */
-  const boost::system::error_code& error() const
+  const std::error_code& error() const
   {
     return rdbuf()->puberror();
   }
