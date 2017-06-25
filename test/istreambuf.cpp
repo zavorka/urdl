@@ -60,7 +60,7 @@ void istreambuf_compile_test()
 
   // puberror()
 
-  want<boost::system::error_code>(const_istreambuf1.puberror());
+  want<std::error_code>(const_istreambuf1.puberror());
 
   // read_timeout()
 

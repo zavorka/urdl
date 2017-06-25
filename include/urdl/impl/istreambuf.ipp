@@ -11,14 +11,14 @@
 #ifndef URDL_IMPL_ISTREAMBUF_IPP
 #define URDL_IMPL_ISTREAMBUF_IPP
 
-#include <boost/array.hpp>
-#include <boost/asio/io_service.hpp>
-#include <boost/asio/deadline_timer.hpp>
-#include <boost/system/system_error.hpp>
-#include <boost/throw_exception.hpp>
+#include <array>
+#include <system_error>
+#include <asio/detail/throw_exception.hpp>
+#include <asio/io_service.hpp>
+#include <asio/basic_waitable_timer.hpp>
+#include <urdl/istreambuf.hpp>
 #include "urdl/read_stream.hpp"
 
-#include "urdl/detail/abi_prefix.hpp"
 
 namespace urdl {
 
@@ -35,11 +35,11 @@ struct istreambuf::body
   {
   }
 
-  boost::array<char, buffer_size> get_buffer_;
-  boost::asio::io_service io_service_;
-  boost::system::error_code error_;
+  std::array<char, buffer_size> get_buffer_;
+  asio::io_service io_service_;
+  std::error_code error_;
   read_stream read_stream_;
-  boost::asio::deadline_timer timer_;
+  asio::basic_waitable_timer<std::chrono::steady_clock> timer_;
   std::size_t open_timeout_;
   std::size_t read_timeout_;
 };
@@ -48,9 +48,9 @@ namespace detail
 {
   struct istreambuf_open_handler
   {
-    boost::system::error_code& error_;
-    boost::asio::deadline_timer& timer_;
-    void operator()(boost::system::error_code ec)
+    std::error_code& error_;
+    asio::basic_waitable_timer<std::chrono::steady_clock>& timer_;
+    void operator()(std::error_code ec)
     {
       error_ = ec;
       timer_.cancel();
@@ -59,10 +59,10 @@ namespace detail
 
   struct istreambuf_read_handler
   {
-    boost::system::error_code& error_;
+    std::error_code& error_;
     std::size_t& bytes_transferred_;
-    boost::asio::deadline_timer& timer_;
-    void operator()(boost::system::error_code ec, std::size_t bytes_transferred)
+    asio::basic_waitable_timer<std::chrono::steady_clock>& timer_;
+    void operator()(std::error_code ec, std::size_t bytes_transferred)
     {
       error_ = ec;
       bytes_transferred_ = bytes_transferred;
@@ -73,9 +73,9 @@ namespace detail
   struct istreambuf_timeout_handler
   {
     read_stream& read_stream_;
-    void operator()(boost::system::error_code ec)
+    void operator()(std::error_code ec)
     {
-      if (ec != boost::asio::error::operation_aborted)
+      if (ec != asio::error::operation_aborted)
         read_stream_.close(ec);
     }
   };
@@ -122,14 +122,14 @@ istreambuf* istreambuf::open(const url& u)
 
   detail::istreambuf_timeout_handler th = { body_->read_stream_ };
   body_->timer_.expires_from_now(
-      boost::posix_time::milliseconds(body_->open_timeout_));
+      std::chrono::milliseconds(body_->open_timeout_));
   body_->timer_.async_wait(th);
 
   body_->io_service_.reset();
   body_->io_service_.run();
 
   if (!body_->read_stream_.is_open())
-    body_->error_ = make_error_code(boost::system::errc::timed_out);
+    body_->error_ = make_error_code(std::errc::timed_out);
 
   return !body_->error_ ? this : 0;
 }
@@ -150,7 +150,7 @@ istreambuf* istreambuf::close()
   return !body_->error_ ? this : 0;
 }
 
-const boost::system::error_code& istreambuf::puberror() const
+const std::error_code& istreambuf::puberror() const
 {
   return error();
 }
@@ -197,28 +197,28 @@ std::streambuf::int_type istreambuf::underflow()
     std::size_t bytes_transferred = 0;
     detail::istreambuf_read_handler rh
       = { body_->error_, bytes_transferred, body_->timer_ };
-    body_->read_stream_.async_read_some(boost::asio::buffer(
-          boost::asio::buffer(body_->get_buffer_) + body::putback_max), rh);
+    body_->read_stream_.async_read_some(asio::buffer(
+          asio::buffer(body_->get_buffer_) + body::putback_max), rh);
 
     detail::istreambuf_timeout_handler th = { body_->read_stream_ };
     body_->timer_.expires_from_now(
-        boost::posix_time::milliseconds(body_->read_timeout_));
+        std::chrono::milliseconds(body_->read_timeout_));
     body_->timer_.async_wait(th);
 
     body_->io_service_.reset();
     body_->io_service_.run();
 
     if (!body_->read_stream_.is_open())
-      body_->error_ = make_error_code(boost::system::errc::timed_out);
+      body_->error_ = make_error_code(std::errc::timed_out);
 
     if (body_->error_)
     {
-      if (body_->error_ == boost::asio::error::eof)
+      if (body_->error_ == asio::error::eof)
       {
-        body_->error_ = boost::system::error_code();
+        body_->error_ = std::error_code();
         return traits_type::eof();
       }
-      boost::throw_exception(boost::system::system_error(body_->error_));
+      asio::detail::throw_exception(std::system_error(body_->error_));
     }
 
     setg(body_->get_buffer_.begin(),
@@ -232,7 +232,7 @@ std::streambuf::int_type istreambuf::underflow()
   }
 }
 
-const boost::system::error_code& istreambuf::error() const
+const std::error_code& istreambuf::error() const
 {
   return body_->error_;
 }
@@ -246,6 +246,5 @@ void istreambuf::init_buffers()
 
 } // namespace urdl
 
-#include "urdl/detail/abi_suffix.hpp"
 
 #endif // URDL_IMPL_ISTREAMBUF_IPP

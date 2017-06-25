@@ -16,8 +16,6 @@
 #include <cstdlib>
 #include <string>
 
-#include "urdl/detail/abi_prefix.hpp"
-
 namespace urdl {
 namespace detail {
 
@@ -291,7 +289,5 @@ bool parse_http_headers(Iterator begin, Iterator end,
 
 } // namespace detail
 } // namespace urdl
-
-#include "urdl/detail/abi_suffix.hpp"
 
 #endif // URDL_DETAIL_PARSERS_HPP

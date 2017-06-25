@@ -11,7 +11,7 @@
 #ifndef URDL_OPTION_SET_IPP
 #define URDL_OPTION_SET_IPP
 
-#include "urdl/detail/abi_prefix.hpp"
+#include <urdl/option_set.hpp>
 
 namespace urdl {
 
@@ -100,7 +100,5 @@ void option_set::clear_option_wrapper_base(const std::type_info& ti)
 }
 
 } // namespace urdl
-
-#include "urdl/detail/abi_suffix.hpp"
 
 #endif // URDL_OPTION_SET_IPP

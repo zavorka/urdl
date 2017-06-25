@@ -15,8 +15,6 @@
 #include "urdl/detail/config.hpp"
 #include "urdl/detail/scoped_ptr.hpp"
 
-#include "urdl/detail/abi_prefix.hpp"
-
 namespace urdl {
 
 /// The class @c option_set maintains a collection of options.
@@ -142,10 +140,6 @@ private:
 
 } // namespace urdl
 
-#include "urdl/detail/abi_suffix.hpp"
-
-#if defined(URDL_HEADER_ONLY)
 # include "urdl/impl/option_set.ipp"
-#endif
 
 #endif // URDL_OPTION_SET_HPP

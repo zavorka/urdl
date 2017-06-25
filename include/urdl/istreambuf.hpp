@@ -12,12 +12,11 @@
 #define URDL_ISTREAMBUF_HPP
 
 #include <streambuf>
-#include <boost/system/error_code.hpp>
+#include <system_error>
 #include "urdl/detail/config.hpp"
 #include "urdl/option_set.hpp"
 #include "urdl/url.hpp"
 
-#include "urdl/detail/abi_prefix.hpp"
 
 namespace urdl {
 
@@ -121,7 +120,7 @@ public:
    * @par Remarks
    * Returns @c error().
    */
-  URDL_DECL const boost::system::error_code& puberror() const;
+  URDL_DECL const std::error_code& puberror() const;
 
   /// Gets the open timeout of the stream buffer.
   /**
@@ -196,7 +195,7 @@ protected:
    * @c error_code values and categories depends on the protocol of the URL
    * used to open the stream buffer.
    */
-  URDL_DECL virtual const boost::system::error_code& error() const;
+  URDL_DECL virtual const std::error_code& error() const;
 
 private:
   URDL_DECL void init_buffers();
@@ -207,10 +206,6 @@ private:
 
 } // namespace urdl
 
-#include "urdl/detail/abi_suffix.hpp"
-
-#if defined(URDL_HEADER_ONLY)
 # include "urdl/impl/istreambuf.ipp"
-#endif
 
 #endif // URDL_ISTREAMBUF_HPP

@@ -8,17 +8,16 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include <urdl/read_stream.hpp>
-#include <boost/asio/spawn.hpp>
-#include <boost/bind.hpp>
-#include <boost/ref.hpp>
+#include <string>
+#include <memory>
 #include <iostream>
 #include <fstream>
-#include <string>
+#include <asio/spawn.hpp>
+#include <urdl/read_stream.hpp>
 
-void download(boost::asio::io_service& io_service,
+void download(asio::io_service& io_service,
     const urdl::url& url, const std::string& file,
-    boost::asio::yield_context yield)
+    asio::yield_context yield)
 {
   try
   {
@@ -30,12 +29,12 @@ void download(boost::asio::io_service& io_service,
 
     char buffer[1024];
     std::size_t length;
-    boost::system::error_code ec;
+    std::error_code ec;
 
     do
     {
       length = read_stream.async_read_some(
-          boost::asio::buffer(buffer), yield[ec]);
+          asio::buffer(buffer), yield[ec]);
       ofstream.write(buffer, length);
     } while (length > 0);
   }
@@ -56,13 +55,13 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    boost::asio::io_service io_service;
+    asio::io_service io_service;
 
     for (int i = 1; i < argc; i += 2)
     {
-      boost::asio::spawn(io_service,
-          boost::bind(download, boost::ref(io_service),
-            urdl::url(argv[i]), std::string(argv[i + 1]), _1));
+      asio::spawn(io_service, [&io_service, argv, i] (asio::yield_context yield) {
+          download(io_service, urdl::url(argv[i]), std::string(argv[i + 1]), yield);
+      });
     }
 
     io_service.run();

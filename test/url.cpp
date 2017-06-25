@@ -76,7 +76,7 @@ void url_compile_test()
 
   // from_string()
 
-  boost::system::error_code ec;
+  std::error_code ec;
   want<urdl::url>(urdl::url::from_string("http://foo/bar"));
   want<urdl::url>(urdl::url::from_string("http://foo/bar", ec));
   want<urdl::url>(urdl::url::from_string(std::string("http://foo/bar")));
@@ -99,7 +99,7 @@ void url_compile_test()
 // Test URL parsing.
 void url_from_string_test()
 {
-  boost::system::error_code ec;
+  std::error_code ec;
 
   urdl::url url = urdl::url::from_string("http://host", ec);
   BOOST_CHECK(!ec);

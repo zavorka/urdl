@@ -11,12 +11,6 @@
 #ifndef URDL_DETAIL_SCOPED_PTR_HPP
 #define URDL_DETAIL_SCOPED_PTR_HPP
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
-# pragma once
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
-
-#include "urdl/detail/abi_prefix.hpp"
-
 namespace urdl {
 namespace detail {
 
@@ -79,7 +73,5 @@ private:
 
 } // namespace detail
 } // namespace urdl
-
-#include "urdl/detail/abi_suffix.hpp"
 
 #endif // URDL_DETAIL_SCOPED_PTR_HPP

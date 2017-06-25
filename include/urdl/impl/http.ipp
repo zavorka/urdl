@@ -11,16 +11,16 @@
 #ifndef URDL_HTTP_IPP
 #define URDL_HTTP_IPP
 
-#include <boost/system/error_code.hpp>
+#include <system_error>
+#include <urdl/http.hpp>
 
-#include "urdl/detail/abi_prefix.hpp"
 
 namespace urdl {
 namespace http {
 namespace detail {
 
 class error_category_impl
-  : public boost::system::error_category
+  : public std::error_category
 {
   virtual const char* name() const URDL_ERROR_CATEGORY_NOEXCEPT
   {
@@ -120,25 +120,25 @@ class error_category_impl
     }
   }
 
-  virtual boost::system::error_condition default_error_condition(
+  virtual std::error_condition default_error_condition(
       int e) const URDL_ERROR_CATEGORY_NOEXCEPT
   {
     switch (e)
     {
     case http::errc::unauthorized:
     case http::errc::forbidden:
-      return boost::system::errc::permission_denied;
+      return std::errc::permission_denied;
     case http::errc::not_found:
-      return boost::system::errc::no_such_file_or_directory;
+      return std::errc::no_such_file_or_directory;
     default:
-      return boost::system::error_condition(e, *this);
+      return std::error_condition(e, *this);
     }
   }
 };
 
 } // namespace detail
 
-const boost::system::error_category& error_category()
+const std::error_category& error_category()
 {
   static detail::error_category_impl instance;
   return instance;
@@ -146,13 +146,11 @@ const boost::system::error_category& error_category()
 
 namespace detail {
 
-static const boost::system::error_category& category_instance
+static const std::error_category& category_instance
   = error_category();
 
 } // namespace detail
 } // namespace http
 } // namespace urdl
-
-#include "urdl/detail/abi_suffix.hpp"
 
 #endif // URDL_HTTP_IPP

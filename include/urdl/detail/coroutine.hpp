@@ -11,7 +11,6 @@
 #ifndef URDL_DETAIL_COROUTINE_HPP
 #define URDL_DETAIL_COROUTINE_HPP
 
-#include "urdl/detail/abi_prefix.hpp"
 
 namespace urdl {
 namespace detail {
@@ -38,18 +37,12 @@ protected:
     ; \
   } while (0)
 
-#if defined(_MSC_VER)
-# define URDL_CORO_YIELD(s) URDL_CORO_YIELD_IMPL(s, __COUNTER__ + 1)
-#else // defined(_MSC_VER)
-# define URDL_CORO_YIELD(s) URDL_CORO_YIELD_IMPL(s, __LINE__)
-#endif // defined(_MSC_VER)
-
+#define URDL_CORO_YIELD(s) URDL_CORO_YIELD_IMPL(s, __LINE__)
 #define URDL_CORO_END \
   }
 
 } // namespace detail
 } // namespace urdl
 
-#include "urdl/detail/abi_suffix.hpp"
 
 #endif // URDL_DETAIL_COROUTINE_HPP

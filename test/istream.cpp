@@ -8,11 +8,6 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-// Disable autolinking for unit tests.
-#if !defined(BOOST_ALL_NO_LIB)
-#define BOOST_ALL_NO_LIB 1
-#endif // !defined(BOOST_ALL_NO_LIB)
-
 // Test that header file is self-contained.
 #include "urdl/istream.hpp"
 
@@ -72,7 +67,7 @@ void istream_compile_test()
 
   // error()
 
-  want<boost::system::error_code>(const_istream1.error());
+  want<std::error_code>(const_istream1.error());
 
   // read_timeout()
 
@@ -96,7 +91,7 @@ void istream_compile_test()
 void istream_http_test()
 {
   http_server server;
-  std::string port = boost::lexical_cast<std::string>(server.port());
+  std::string port = std::to_string(server.port());
 
   std::string request =
     "GET / HTTP/1.0\r\n"
@@ -125,7 +120,7 @@ void istream_http_test()
 void istream_http_not_found_test()
 {
   http_server server;
-  std::string port = boost::lexical_cast<std::string>(server.port());
+  std::string port = std::to_string(server.port());
 
   std::string request =
     "GET / HTTP/1.0\r\n"
@@ -152,7 +147,7 @@ void istream_http_not_found_test()
 void istream_http_open_timeout_test()
 {
   http_server server;
-  std::string port = boost::lexical_cast<std::string>(server.port());
+  std::string port = std::to_string(server.port());
 
   std::string request =
     "GET / HTTP/1.0\r\n"
@@ -171,14 +166,14 @@ void istream_http_open_timeout_test()
   istream1.open("http://localhost:" + port + "/");
   server.stop();
 
-  BOOST_CHECK(istream1.error() == boost::system::errc::timed_out);
+  BOOST_CHECK(istream1.error() == std::errc::timed_out);
 }
 
 // Test HTTP with a read timeout.
 void istream_http_read_timeout_test()
 {
   http_server server;
-  std::string port = boost::lexical_cast<std::string>(server.port());
+  std::string port = std::to_string(server.port());
 
   std::string request =
     "GET / HTTP/1.0\r\n"
@@ -200,7 +195,7 @@ void istream_http_read_timeout_test()
   bool request_matched = server.stop();
 
   BOOST_CHECK(request_matched);
-  BOOST_CHECK(istream1.error() == boost::system::errc::timed_out);
+  BOOST_CHECK(istream1.error() == std::errc::timed_out);
 }
 
 test_suite* init_unit_test_suite(int, char*[])

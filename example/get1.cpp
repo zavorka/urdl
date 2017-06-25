@@ -8,10 +8,10 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include <urdl/istream.hpp>
-#include <boost/progress.hpp>
 #include <iostream>
 #include <fstream>
+#include <urdl/istream.hpp>
+#include <boost/progress.hpp>
 
 int main(int argc, char* argv[])
 {

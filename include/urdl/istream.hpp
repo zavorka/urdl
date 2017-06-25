@@ -12,13 +12,13 @@
 #define URDL_ISTREAM_HPP
 
 #include <istream>
-#include <boost/utility/base_from_member.hpp>
-#include <boost/system/error_code.hpp>
-#include "urdl/istreambuf.hpp"
+#include <system_error>
+#include <urdl/istreambuf.hpp>
+#include <urdl/base_from_member.hpp>
 
-#include "urdl/detail/abi_prefix.hpp"
 
 namespace urdl {
+
 
 /// The class @c istream supports reading content from a specified URL.
 /**
@@ -46,7 +46,7 @@ namespace urdl {
  * @e Namespace: @c urdl
  */
 class istream
-  : private boost::base_from_member<istreambuf>,
+  : private base_from_member<istreambuf>,
     public std::basic_istream<char>
 {
 public:
@@ -58,7 +58,7 @@ public:
    */
   istream()
     : std::basic_istream<char>(
-        &this->boost::base_from_member<istreambuf>::member)
+        &this->base_from_member<istreambuf>::member)
   {
   }
 
@@ -74,7 +74,7 @@ public:
    */
   explicit istream(const url& u)
     : std::basic_istream<char>(
-        &this->boost::base_from_member<istreambuf>::member)
+        &this->base_from_member<istreambuf>::member)
   {
     if (rdbuf()->open(u) == 0)
       setstate(std::ios_base::failbit);
@@ -102,7 +102,7 @@ public:
    */
   explicit istream(const url& u, const option_set& options)
     : std::basic_istream<char>(
-        &this->boost::base_from_member<istreambuf>::member)
+        &this->base_from_member<istreambuf>::member)
   {
     rdbuf()->set_options(options);
     if (rdbuf()->open(u) == 0)
@@ -245,7 +245,7 @@ public:
   istreambuf* rdbuf() const
   {
     return const_cast<istreambuf*>(
-        &this->boost::base_from_member<istreambuf>::member);
+        &this->base_from_member<istreambuf>::member);
   }
 
   /// Gets the last error associated with the stream.
@@ -271,7 +271,7 @@ public:
    * }
    * @endcode
    */
-  const boost::system::error_code& error() const
+  const std::error_code& error() const
   {
     return rdbuf()->puberror();
   }
@@ -373,7 +373,5 @@ public:
 };
 
 } // namespace urdl
-
-#include "urdl/detail/abi_suffix.hpp"
 
 #endif // URDL_ISTREAM_HPP
